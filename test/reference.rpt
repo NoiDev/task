@@ -1,0 +1,196 @@
+Output Log for Test: "task" utility
+
+
+Section: PEEK
+
+Test: peek: no file
+Command: task
+Output:
+> No task file found (.tasks).
+>  "task push [name]" to add a task or
+>  "task init" to create an empty task list
+
+Test: peek: empty file
+Command: task
+Output:
+> Current Task: (no tasks left)
+
+Test: peek: non-empty file
+Command: task
+Output:
+> Current Task: FIRST_TASK
+
+
+Section: LIST
+
+Test: list: no file
+Command: task list
+Output:
+> No task file found (.tasks).
+>  "task push [name]" to add a task or
+>  "task init" to create an empty task list
+
+Test: list: empty file
+Command: task list
+Output:
+> (no tasks left)
+
+Test: list: non-empty file
+Command: task list
+Output:
+> FIRST_TASK
+
+Test: list: multi-line file
+Command: task list
+Output:
+> SECOND_TASK
+> FIRST_TASK
+
+Test: list: errors
+Command: task list UNEXPECTED
+Output:
+> Too many arguments.
+>  (Anything after "list" is ignored.)
+> SECOND_TASK
+> FIRST_TASK
+
+
+Section: PUSH
+
+Test: push: no file
+Command: task push FIRST_TASK
+Output:
+> Created a new task file (.tasks).
+> Pushed New Task: FIRST_TASK
+Confirm State:
+> FIRST_TASK
+
+Test: push: empty file
+Command: task push FIRST_TASK
+Output:
+> Pushed New Task: FIRST_TASK
+Confirm State:
+> FIRST_TASK
+
+Test: push: non-empty file
+Command: task push SECOND_TASK
+Output:
+> Pushed New Task: SECOND_TASK
+Confirm State:
+> SECOND_TASK
+> FIRST_TASK
+
+Test: push: errors: missing task
+Command: task push
+Output:
+> Must pass a task to push.
+>  "task push [name]" to add a task
+
+Test: push: errors: unquoted long task
+Command: task push INVALID TASK
+Output:
+> Too many arguments.  Did you forget to quote your task?.
+>  "task push "long task name" to add a task
+
+
+Section: POP
+
+Test: pop: no file
+Command: task pop
+Output:
+> No task file found (.tasks).
+>  "task push [name]" to add a task or
+>  "task init" to create an empty task list
+
+Test: pop: empty file
+Command: task pop
+Output:
+> Next Task: (no tasks left)
+Confirm State:
+> (no tasks left)
+
+Test: pop: multiple items in stack
+Command: task pop
+Output:
+> Completed Task: SECOND_TASK
+> Next Task: FIRST_TASK
+Confirm State:
+> FIRST_TASK
+
+Test: pop: last task in stack
+Command: task pop
+Output:
+> Completed Task: FIRST_TASK
+> Next Task: (no tasks left)
+Confirm State:
+> (no tasks left)
+
+Test: pop: errors
+Command: task pop FIRST_TASK
+Output:
+> Too many arguments.  (Popping tasks by name not supported.)
+>  "task pop" to pop the top task off the stack
+Confirm State:
+> FIRST_TASK
+
+
+Section: INIT
+
+Test: init: no file present
+Command: task init
+Output:
+> Created an empty task file (.tasks).
+Confirm State:
+> (no tasks left)
+
+Test: init: file already present
+Command: task init
+Output:
+> Task file already exists (.tasks).
+Confirm State:
+> FIRST_TASK
+
+Test: init: errors
+Command: task init UNEXPECTED
+Output:
+> Too many arguments.
+>  (Anything after "init" is ignored.)
+> Task file already exists (.tasks).
+
+
+Section: HELP
+
+Test: help: normal output
+Command: task help
+Output:
+> "task" is a utility to manage a simple task stack.
+> Supported commands:
+>     (no command) - View the task on the top of the stack.
+>     list         - View the full task stack.
+>     pop          - Remove the top task from the stack.
+>     push [task]  - Add a new task to the stack.
+>     init         - Create an empty task file.
+>     help         - View this screen.
+
+Test: help: errors
+Command: task help UNEXPECTED
+Output:
+> Too many arguments.
+> "task help" to see this screen.
+> "task" is a utility to manage a simple task stack.
+> Supported commands:
+>     (no command) - View the task on the top of the stack.
+>     list         - View the full task stack.
+>     pop          - Remove the top task from the stack.
+>     push [task]  - Add a new task to the stack.
+>     init         - Create an empty task file.
+>     help         - View this screen.
+
+
+Section: GENERAL
+
+Test: unrecognized command
+Command: task UNEXPECTED
+Output:
+> Command (UNEXPECTED) is not recognised.
+>  "task help" for a list of commands .
